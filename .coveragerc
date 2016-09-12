@@ -1,0 +1,7 @@
+[run]
+branch : True
+source: adventure
+omit: tests
+
+[report]
+show_missing = True
