@@ -25,3 +25,29 @@ class BaseModel(metaclass=ABCMeta):
             a dictionary representation of self
         """
         raise NotImplementedError()
+
+
+class SerializedReference(dict):
+    """Abstracts the assignment of one object to another.
+
+    This allows for simpler de/serialization, as any objects existing in
+    multiple locations do not need to be redundantly de/serialized. Instead,
+    the object can be handled independently, while any of that object's
+    assignments are represented by a SerializedReferrence.
+    """
+
+    def __init__(self, model_ref, identifier):
+        """Creates a new `SerializedReference` instance.
+
+        Arguments:
+            model_ref (str): a dot-delimited path to the class being referenced
+            identifier (str): a unique identifier for the object referenced
+        """
+        self['model_ref'] = model_ref
+        self['identifier'] = identifier
+
+    def __str__(self):
+        return '<SerializedReference: {model_ref} {identifier}>'.format(
+            model_ref=self['model_ref'],
+            identifier=self['identifier']
+        )
