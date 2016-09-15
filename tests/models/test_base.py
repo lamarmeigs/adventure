@@ -4,7 +4,18 @@ from adventure.models.base import BaseModel, SerializedReference
 
 
 class BaseModelTestCase(TestCase):
-    def test_init_increments_subclass_count(self):
+    def test_serialize_raises_not_implemented_error(self):
+        class DummyModel(BaseModel):
+            def serialize(self):
+                super().serialize()
+
+        dummy = DummyModel()
+        with self.assertRaises(NotImplementedError):
+            dummy.serialize()
+
+
+class BaseModelInitTestCase(TestCase):
+    def test_increments_subclass_count(self):
         class DummyModelA(BaseModel):
             def serialize(self):
                 pass
@@ -13,20 +24,24 @@ class BaseModelTestCase(TestCase):
             def serialize(self):
                 pass
 
-        dummy_1 = DummyModelA()
+        dummy_a = DummyModelA()
         self.assertEqual(BaseModel.COUNT, 0)
         self.assertEqual(DummyModelA.COUNT, 1)
         self.assertEqual(DummyModelB.COUNT, 0)
-        self.assertEqual(dummy_1._identifier, 1)
+        self.assertEqual(dummy_a._identifier, 1)
 
-    def test_serialize_raises_not_implemented_error(self):
+    def test_sets_identifier(self):
         class DummyModelC(BaseModel):
             def serialize(self):
-                super().serialize()
+                pass
 
-        dummy = DummyModelC()
-        with self.assertRaises(NotImplementedError):
-            dummy.serialize()
+        dummy_1 = DummyModelC(_identifier=5)
+        self.assertEqual(dummy_1._identifier, 5)
+        self.assertEqual(DummyModelC.COUNT, 5)
+
+        dummy_2 = DummyModelC(_identifier=2)
+        self.assertEqual(dummy_2._identifier, 2)
+        self.assertEqual(DummyModelC.COUNT, 5)
 
 
 class SerializedReferenceTestCase(TestCase):

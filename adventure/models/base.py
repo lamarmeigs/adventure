@@ -1,4 +1,4 @@
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod
 
 
 class BaseModel(metaclass=ABCMeta):
@@ -8,16 +8,24 @@ class BaseModel(metaclass=ABCMeta):
     # particular class.
     COUNT = 0
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, _identifier=None):
         """Create a new instance of this class.
 
         Increment the COUNT for this class, and assign the latest value to the
         `_identifier` attribute. Though not guaranteed to be unique, this
         should function as a poor-man's auto-incrementing primary key.
-        """
-        self.__class__.COUNT += 1
-        self._identifier = self.__class__.COUNT
 
+        Arguments:
+            _identifier (int): an optional unique identifier for this object
+        """
+        if _identifier is not None:
+            self._identifier = _identifier
+            self.__class__.COUNT = max(self._identifier, self.__class__.COUNT)
+        else:
+            self.__class__.COUNT += 1
+            self._identifier = self.__class__.COUNT
+
+    @abstractmethod
     def serialize(self):
         """Transform this model object into a JSON-serializable dictionary.
 
@@ -41,7 +49,7 @@ class SerializedReference(dict):
 
         Arguments:
             model_ref (str): a dot-delimited path to the class being referenced
-            identifier (str): a unique identifier for the object referenced
+            identifier (int): a unique identifier for the object referenced
         """
         self['model_ref'] = model_ref
         self['identifier'] = identifier
