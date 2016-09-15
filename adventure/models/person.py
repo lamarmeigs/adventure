@@ -1,7 +1,8 @@
 from adventure.exc import UnknownGenderError
+from adventure.models.base import BaseModel
 
 
-class Person:
+class Person(BaseModel):
     """Represents any living being with whom the player can interact."""
     _allowed_genders = ['male', 'female', 'unspecified', 'creature']
     _pronouns = {
@@ -27,7 +28,8 @@ class Person:
         },
     }
 
-    def __init__(self, name, description, gender, synonym_names=None):
+    def __init__(self, name, description, gender, synonym_names=None,
+                 _identifier=None):
         """Creates a new `Person` instance.
 
         Arguments:
@@ -36,11 +38,13 @@ class Person:
             gender (str): the person's gender (for accurate pronoun usage)
             synonym_names (list | None): any additional strings that can be
                 substituted for name
+            _identifier (int): an optional unique identifier
         """
         self.name = name
         self.description = description
         self.gender = gender
         self.synonym_names = synonym_names or []
+        super().__init__(_identifier=_identifier)
 
     @property
     def gender(self):
@@ -75,3 +79,17 @@ class Person:
             subject (str): an optional subject matter to discuss
         """
         pass
+
+    def serialize(self):
+        """Transform this person object into a JSON-serializable dictionary.
+
+        Return:
+            a dictionary representation of self
+        """
+        return {
+            'name': self.name,
+            'description': self.description,
+            'gender': self.gender,
+            'synonym_names': self.synonym_names,
+            '_identifier': self._identifier,
+        }
