@@ -30,3 +30,6 @@ class Game(BaseModel):
             'start_blurb': self.start_blurb,
             '_identifier': self._identifier,
         }
+
+    def __str__(self):
+        return '<Game {}: {}>'.format(self._identifier, self.title)

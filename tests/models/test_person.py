@@ -31,17 +31,19 @@ class GenderTestCase(TestCase):
         )
 
     def test_str(self):
-        male = Gender('male', 'he', 'him', 'his')
-        self.assertEqual(str(male), '<Gender: male>')
+        male = Gender('male', 'he', 'him', 'his', _identifier=5)
+        self.assertEqual(str(male), '<Gender 5: male>')
 
 
 class PersonTestCase(TestCase):
+    def setUp(self):
+        self.gender = Gender('unspecified', 'they', 'them', 'their')
+
     def test_talk(self):
         pass
 
     def test_serialize(self):
-        gender = Gender('unspecified', 'they', 'them', 'their')
-        person = Person('Jane', 'A real Mensch', gender, ['mensch'])
+        person = Person('Jane', 'A real Mensch', self.gender, ['mensch'])
         serialized_person = person.serialize()
         self.assertEqual(
             serialized_person,
@@ -53,6 +55,15 @@ class PersonTestCase(TestCase):
                 '_identifier': person._identifier,
             }
         )
+
+    def test_str(self):
+        person = Person(
+            name='Willy Wonka',
+            description='Purple suit and all',
+            gender=self.gender,
+            _identifier=18
+        )
+        self.assertEqual(str(person), '<Person 18: Willy Wonka>')
 
 
 class PersonInitTestCase(TestCase):

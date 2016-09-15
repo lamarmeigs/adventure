@@ -32,7 +32,7 @@ class Gender(BaseModel):
         return self.__dict__
 
     def __str__(self):
-        return '<Gender: {}>'.format(self.gender)
+        return '<Gender {}: {}>'.format(self._identifier, self.gender)
 
 
 class Person(BaseModel):
@@ -77,3 +77,6 @@ class Person(BaseModel):
             'synonym_names': self.synonym_names,
             '_identifier': self._identifier,
         }
+
+    def __str__(self):
+        return '<Person {}: {}>'.format(self._identifier, self.name)

@@ -5,9 +5,12 @@ from adventure.models import Player, Location, Item
 
 
 class PlayerTestCase(TestCase):
+    def setUp(self):
+        self.location = Location('a hole in the ground', "It's dark")
+
     def test_serialize(self):
         player = Player(
-            location=Location('a hole in the ground', "It's dark"),
+            location=self.location,
             inventory=[Item('torch', "It's off")],
             score=11
         )
@@ -20,6 +23,10 @@ class PlayerTestCase(TestCase):
                 '_identifier': player._identifier,
             }
         )
+
+    def test_str(self):
+        player = Player(self.location, _identifier=4)
+        self.assertEqual(str(player), '<Player 4>')
 
 
 class InitTestCase(TestCase):

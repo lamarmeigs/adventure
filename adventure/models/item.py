@@ -43,3 +43,6 @@ class Item(BaseModel):
             a dictionary representation of self
         """
         return self.__dict__
+
+    def __str__(self):
+        return '<Item {}: {}>'.format(self._identifier, self.name)

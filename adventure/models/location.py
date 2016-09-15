@@ -25,6 +25,9 @@ class Direction(BaseModel):
         """
         return self.__dict__
 
+    def __str__(self):
+        return '<Direction {}: {}>'.format(self._identifier, self.name)
+
 
 class Exit(BaseModel):
     """Represents a connection from one location to another."""
@@ -53,6 +56,17 @@ class Exit(BaseModel):
             'destination': self.destination.reference,
             '_identifier': self._identifier
         }
+
+    def __str__(self):
+        destination_str = 'location {} ({})'.format(
+            self.destination._identifier,
+            self.destination.name
+        )
+        return '<Exit {identifier}: {direction} to {destination}>'.format(
+            identifier=self._identifier,
+            direction=self.direction.name,
+            destination=destination_str
+        )
 
 
 class Location(BaseModel):
@@ -94,3 +108,6 @@ class Location(BaseModel):
             'exits': [exit.reference for exit in self.exits],
             '_identifier': self._identifier,
         }
+
+    def __str__(self):
+        return '<Location {}: {}>'.format(self._identifier, self.name)

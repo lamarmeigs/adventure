@@ -1,4 +1,5 @@
 from unittest import TestCase
+from unittest.mock import patch
 
 from adventure.models.base import BaseModel, SerializedReference
 
@@ -23,6 +24,25 @@ class BaseModelTestCase(TestCase):
             dummy.reference,
             SerializedReference('tests.models.test_base.RefModel', 1)
         )
+
+    def test_str(self):
+        class StrModel(BaseModel):
+            def serialize(self):
+                pass
+
+        dummy = StrModel(_identifier=2)
+        self.assertEqual(str(dummy), '<StrModel 2>')
+
+    def test_repr(self):
+        class ReprModel(BaseModel):
+            def serialize(self):
+                pass
+
+        dummy = ReprModel(_identifier=9)
+        with patch.object(dummy, '__str__', return_value='repr') as mock_str:
+            dummy_repr = dummy.__repr__()
+        mock_str.assert_called_once_with()
+        self.assertEqual(dummy_repr, 'repr')
 
 
 class BaseModelInitTestCase(TestCase):

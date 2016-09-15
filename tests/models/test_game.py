@@ -16,6 +16,10 @@ class GameTestCase(TestCase):
             }
         )
 
+    def test_str(self):
+        game = Game('Printable Game', 'Dullest Game Ever', _identifier=99)
+        self.assertEqual(str(game), '<Game 99: Printable Game>')
+
 
 class InitTestCase(TestCase):
     def test_set_parameters(self):

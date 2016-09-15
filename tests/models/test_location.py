@@ -27,6 +27,10 @@ class DirectionTestCase(TestCase):
             }
         )
 
+    def test_str(self):
+        right = Direction(name='right', abbrev='r', _identifier=5)
+        self.assertEqual(str(right), '<Direction 5: right>')
+
 
 class ExitTestCase(TestCase):
     def setUp(self):
@@ -59,6 +63,14 @@ class ExitTestCase(TestCase):
                 '_identifier': exit._identifier,
             }
         )
+
+    def test_str(self):
+        exit = Exit(
+            direction=Direction('down', 'd'),
+            destination=Location('basement', 'full of props', _identifier=32),
+            _identifier=3,
+        )
+        self.assertEqual(str(exit), '<Exit 3: down to location 32 (basement)>')
 
 
 class LocationTestCase(TestCase):
@@ -117,3 +129,7 @@ class LocationInitTestCase(TestCase):
         with patch('adventure.models.base.BaseModel.__init__') as mock_init:
             Location('Dungeon', 'Ew, was that a rat?', _identifier=27)
         mock_init.assert_called_once_with(_identifier=27)
+
+    def test_str(self):
+        location = Location('Eyrie', 'You can see your house!', _identifier=6)
+        self.assertEqual(str(location), '<Location 6: Eyrie>')

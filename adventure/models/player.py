@@ -29,3 +29,6 @@ class Player(BaseModel):
             'score': self.score,
             '_identifier': self._identifier,
         }
+
+    def __str__(self):
+        return '<Player {}>'.format(self._identifier)

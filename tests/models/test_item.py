@@ -27,6 +27,10 @@ class ItemTestCase(TestCase):
             }
         )
 
+    def test_str(self):
+        item = Item('wrench', _identifier=23)
+        self.assertEqual(str(item), '<Item 23: wrench>')
+
 
 class ItemInitTestCase(TestCase):
     def test_set_parameters(self):

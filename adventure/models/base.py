@@ -43,6 +43,15 @@ class BaseModel(metaclass=ABCMeta):
         )
         return SerializedReference(module_path, self._identifier)
 
+    def __str__(self):
+        return '<{model} {identifier}>'.format(
+            model=self.__class__.__name__,
+            identifier=self._identifier
+        )
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class SerializedReference(dict):
     """Abstracts the assignment of one object to another.
