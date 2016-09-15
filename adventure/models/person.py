@@ -1,32 +1,42 @@
-from adventure.exc import UnknownGenderError
 from adventure.models.base import BaseModel
+
+
+class Gender(BaseModel):
+    """Associates a gender with its gendered pronouns."""
+
+    def __init__(self, gender, subject_pronoun, object_pronoun,
+                 possessive_pronoun, _identifier=None):
+        """Creates a new `Gender` instance.
+
+        Arguments:
+            gender (str): a simple gender descriptor (eg. male, female)
+            subject_pronoun (str): pronoun to use when person is the subject of
+                a sentence (eg. he, she, it, they)
+            object_pronoun (str): pronoun to use when person is the object of a
+                sentence (eg. him, her, it, them)
+            possessive_pronoun (str): pronoun to use to describe possession of
+                a noun (eg. his, her, its, their)
+        """
+        self.gender = gender
+        self.subject_pronoun = subject_pronoun
+        self.object_pronoun = object_pronoun
+        self.possessive_pronoun = possessive_pronoun
+        super().__init__(_identifier=_identifier)
+
+    def serialize(self):
+        """Transform this gender object into a JSON-serializable dictionary.
+
+        Return:
+            a dictionary representation of self
+        """
+        return self.__dict__
+
+    def __str__(self):
+        return '<Gender: {}>'.format(self.gender)
 
 
 class Person(BaseModel):
     """Represents any living being with whom the player can interact."""
-    _allowed_genders = ['male', 'female', 'unspecified', 'creature']
-    _pronouns = {
-        'male': {
-            'subject': 'he',
-            'object': 'him',
-            'possessive': 'his',
-        },
-        'female': {
-            'subject': 'she',
-            'object': 'her',
-            'possessive': 'her',
-        },
-        'unspecified': {
-            'subject': 'they',
-            'object': 'them',
-            'possessive': 'their',
-        },
-        'creature': {
-            'subject': 'it',
-            'object': 'it',
-            'possessive': 'its',
-        },
-    }
 
     def __init__(self, name, description, gender, synonym_names=None,
                  _identifier=None):
@@ -35,7 +45,7 @@ class Person(BaseModel):
         Arguments:
             name (str): the person's identifying name
             description (str): a detailed description of this person
-            gender (str): the person's gender (for accurate pronoun usage)
+            gender (Gender): the person's gender (for accurate pronoun usage)
             synonym_names (list | None): any additional strings that can be
                 substituted for name
             _identifier (int): an optional unique identifier
@@ -45,32 +55,6 @@ class Person(BaseModel):
         self.gender = gender
         self.synonym_names = synonym_names or []
         super().__init__(_identifier=_identifier)
-
-    @property
-    def gender(self):
-        return self._gender
-
-    @gender.setter
-    def gender(self, gender):
-        if gender not in self._allowed_genders:
-            raise UnknownGenderError(
-                gender,
-                context='person "{}"'.format(self.name),
-                allowed_genders=self._allowed_genders
-            )
-        self._gender = gender
-
-    @property
-    def subject_pronoun(self):
-        return self._pronouns[self.gender]['subject']
-
-    @property
-    def object_pronoun(self):
-        return self._pronouns[self.gender]['object']
-
-    @property
-    def possessive_pronoun(self):
-        return self._pronouns[self.gender]['possessive']
 
     def talk(self, subject=None):
         """Trigger a basic speech prompt.
@@ -89,7 +73,7 @@ class Person(BaseModel):
         return {
             'name': self.name,
             'description': self.description,
-            'gender': self.gender,
+            'gender': self.gender.reference,
             'synonym_names': self.synonym_names,
             '_identifier': self._identifier,
         }

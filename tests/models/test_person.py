@@ -1,8 +1,38 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from adventure.exc import UnknownGenderError
-from adventure.models import Person
+from adventure.models import Person, Gender
+
+
+class GenderTestCase(TestCase):
+    def test_init_sets_attributes(self):
+        unspecified = Gender('unspecified', 'they', 'them', 'their')
+        self.assertEqual(unspecified.gender, 'unspecified')
+        self.assertEqual(unspecified.subject_pronoun, 'they')
+        self.assertEqual(unspecified.object_pronoun, 'them')
+        self.assertEqual(unspecified.possessive_pronoun, 'their')
+
+    def test_init_calls_super_with_identifier(self):
+        with patch('adventure.models.base.BaseModel.__init__') as mock_init:
+            Gender('female', 'she', 'her', 'her', _identifier=1)
+        mock_init.assert_called_once_with(_identifier=1)
+
+    def test_serialize(self):
+        judy = Gender('judy', 'judy', 'judy', "judy's")
+        self.assertEqual(
+            judy.serialize(),
+            {
+                'gender': judy.gender,
+                'subject_pronoun': judy.subject_pronoun,
+                'object_pronoun': judy.object_pronoun,
+                'possessive_pronoun': judy.possessive_pronoun,
+                '_identifier': judy._identifier,
+            }
+        )
+
+    def test_str(self):
+        male = Gender('male', 'he', 'him', 'his')
+        self.assertEqual(str(male), '<Gender: male>')
 
 
 class PersonTestCase(TestCase):
@@ -10,14 +40,15 @@ class PersonTestCase(TestCase):
         pass
 
     def test_serialize(self):
-        person = Person('Jane', 'A real Mensch', 'unspecified', ['mensch'])
+        gender = Gender('unspecified', 'they', 'them', 'their')
+        person = Person('Jane', 'A real Mensch', gender, ['mensch'])
         serialized_person = person.serialize()
         self.assertEqual(
             serialized_person,
             {
                 'name': person.name,
                 'description': person.description,
-                'gender': person.gender,
+                'gender': person.gender.reference,
                 'synonym_names': person.synonym_names,
                 '_identifier': person._identifier,
             }
@@ -25,16 +56,19 @@ class PersonTestCase(TestCase):
 
 
 class PersonInitTestCase(TestCase):
+    def setUp(self):
+        self.male_gender = Gender('male', 'he', 'him', 'his')
+
     def test_set_parameters(self):
         person = Person(
             name='Gandalf',
             description='An old man dressed in grey',
-            gender='male',
+            gender=self.male_gender,
             synonym_names=['Mithrandir', 'Stormcrow', 'wizard', 'old man']
         )
         self.assertEqual(person.name, 'Gandalf')
         self.assertEqual(person.description, 'An old man dressed in grey')
-        self.assertEqual(person.gender, 'male')
+        self.assertEqual(person.gender, self.male_gender)
         self.assertEqual(
             person.synonym_names,
             ['Mithrandir', 'Stormcrow', 'wizard', 'old man']
@@ -44,7 +78,7 @@ class PersonInitTestCase(TestCase):
         person = Person(
             name='Hamlet',
             description='Dressed all in black, carrying a skull',
-            gender='male'
+            gender=self.male_gender,
         )
         self.assertEqual(person.synonym_names, [])
 
@@ -53,55 +87,7 @@ class PersonInitTestCase(TestCase):
             Person(
                 name='Blackbeard',
                 description="His beard's on fire!",
-                gender='male',
+                gender=self.male_gender,
                 _identifier=3
             )
         mock_init.assert_called_once_with(_identifier=3)
-
-
-class GenderPropertyTestCase(TestCase):
-    def setUp(self):
-        super().setUp()
-        self.person = Person('Francis', 'Some person', 'male')
-
-    def test_get_property_value(self):
-        self.person._gender = 'unknown'
-        self.assertEqual(self.person.gender, 'unknown')
-
-    def test_set_property_value(self):
-        self.person.gender = 'unspecified'
-        self.assertEqual(self.person._gender, 'unspecified')
-
-    def test_unknown_gender_raises_error(self):
-        with self.assertRaises(UnknownGenderError) as ctx:
-            self.person.gender = 'dinosaur'
-        self.assertIn('person "Francis"', str(ctx.exception))
-        self.assertIn(str(self.person._allowed_genders), str(ctx.exception))
-
-
-class PronounPropertiesTestCase(TestCase):
-    def setUp(self):
-        super().setUp()
-        self.person = Person(
-            name='Ada Lovelace',
-            description='Most badass programmer ever',
-            gender='female'
-        )
-
-    def test_get_subject_pronoun(self):
-        self.assertEqual(
-            self.person.subject_pronoun,
-            Person._pronouns.get(self.person.gender)['subject']
-        )
-
-    def test_get_object_pronoun(self):
-        self.assertEqual(
-            self.person.object_pronoun,
-            Person._pronouns.get(self.person.gender)['object']
-        )
-
-    def test_get_possessive_pronoun(self):
-        self.assertEqual(
-            self.person.possessive_pronoun,
-            Person._pronouns.get(self.person.gender)['possessive']
-        )
