@@ -34,6 +34,15 @@ class BaseModel(metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
+    @property
+    def reference(self):
+        """Return a SerializedReference to represent this object."""
+        module_path = '{module}.{cls}'.format(
+            module=self.__module__,
+            cls=self.__class__.__name__
+        )
+        return SerializedReference(module_path, self._identifier)
+
 
 class SerializedReference(dict):
     """Abstracts the assignment of one object to another.

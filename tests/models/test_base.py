@@ -13,6 +13,17 @@ class BaseModelTestCase(TestCase):
         with self.assertRaises(NotImplementedError):
             dummy.serialize()
 
+    def test_reference(self):
+        class RefModel(BaseModel):
+            def serialize(self):
+                pass
+
+        dummy = RefModel()
+        self.assertEqual(
+            dummy.reference,
+            SerializedReference('tests.models.test_base.RefModel', 1)
+        )
+
 
 class BaseModelInitTestCase(TestCase):
     def test_increments_subclass_count(self):
