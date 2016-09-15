@@ -1,13 +1,34 @@
 from unittest import TestCase
+from unittest.mock import patch
 
 from adventure.models import Item
 
 
 class ItemTestCase(TestCase):
-    pass
+    def test_use(self):
+        pass
+
+    def test_serialize(self):
+        item = Item(
+            name='thing',
+            synonym_names=['object', 'thingy'],
+            description='It looks like a thing',
+            is_gettable=True,
+        )
+        serialized_item = item.serialize()
+        self.assertEqual(
+            serialized_item,
+            {
+                'name': item.name,
+                'synonym_names': item.synonym_names,
+                'description': item.description,
+                'is_gettable': item.is_gettable,
+                '_identifier': item._identifier,
+            }
+        )
 
 
-class InitTestCase(ItemTestCase):
+class ItemInitTestCase(TestCase):
     def test_set_parameters(self):
         item = Item(
             name='box of sand',
@@ -27,6 +48,7 @@ class InitTestCase(ItemTestCase):
         self.assertEqual(item.description, '')
         self.assertFalse(item.is_gettable)
 
-
-class UseTestCase(ItemTestCase):
-    pass
+    def test_call_super_with_identifier(self):
+        with patch('adventure.models.base.BaseModel.__init__') as mock_init:
+            Item(name='sword', _identifier=8)
+        mock_init.assert_called_once_with(_identifier=8)
