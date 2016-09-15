@@ -1,0 +1,62 @@
+[
+    {
+        "name": "north",
+        "_identifier": 1,
+        "abbrev": "n"
+    },
+    {
+        "name": "south",
+        "_identifier": 2,
+        "abbrev": "s"
+    },
+    {
+        "name": "east",
+        "_identifier": 3,
+        "abbrev": "e"
+    },
+    {
+        "name": "west",
+        "_identifier": 4,
+        "abbrev": "w"
+    },
+    {
+        "name": "northwest",
+        "_identifier": 6,
+        "abbrev": "nw"
+    },
+    {
+        "name": "northeast",
+        "_identifier": 5,
+        "abbrev": "ne"
+    },
+    {
+        "name": "southwest",
+        "_identifier": 8,
+        "abbrev": "sw"
+    },
+    {
+        "name": "southeast",
+        "_identifier": 7,
+        "abbrev": "se"
+    },
+    {
+        "name": "up",
+        "_identifier": 9,
+        "abbrev": "u"
+    },
+    {
+        "name": "down",
+        "_identifier": 10,
+        "abbrev": "d"
+    },
+    {
+        "name": "left",
+        "_identifier": 11,
+        "abbrev": "l"
+    },
+    {
+        "name": "right",
+        "_identifier": 12,
+        "abbrev": "r"
+    }
+]

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from adventure.exc import AdventureException, UnknownGenderError
+from adventure.exc import AdventureException
 
 
 class AdventureExceptionTestCase(TestCase):

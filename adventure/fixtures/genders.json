@@ -1,0 +1,30 @@
+[
+    {
+        "gender": "male",
+        "object_pronoun": "him",
+        "_identifier": 1,
+        "subject_pronoun": "he",
+        "possessive_pronoun": "his"
+    },
+    {
+        "gender": "female",
+        "object_pronoun": "her",
+        "_identifier": 2,
+        "subject_pronoun": "she",
+        "possessive_pronoun": "her"
+    },
+    {
+        "gender": "unspecified",
+        "object_pronoun": "them",
+        "_identifier": 3,
+        "subject_pronoun": "they",
+        "possessive_pronoun": "their"
+    },
+    {
+        "gender": "creature",
+        "object_pronoun": "it",
+        "_identifier": 4,
+        "subject_pronoun": "it",
+        "possessive_pronoun": "its"
+    }
+]
