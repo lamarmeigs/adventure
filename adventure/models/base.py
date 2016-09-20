@@ -43,6 +43,15 @@ class BaseModel(metaclass=ABCMeta):
         )
         return SerializedReference(module_path, self._identifier)
 
+    def __eq__(self, other):
+        return (
+            isinstance(other, type(self))
+            and self._identifier == other._identifier
+        )
+
+    def __neq__(self, other):
+        return not self.__eq__(other)
+
     def __str__(self):
         return '<{model} {identifier}>'.format(
             model=self.__class__.__name__,

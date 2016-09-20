@@ -75,6 +75,42 @@ class BaseModelInitTestCase(TestCase):
         self.assertEqual(DummyModelC.COUNT, 5)
 
 
+class BaseModelEquivalenceTestCase(TestCase):
+    class EqualityModel(BaseModel):
+        def serialize(self):
+            pass
+
+    class OtherEqualityModel(BaseModel):
+        def serialize(self):
+            pass
+
+    def test_full_eq(self):
+        dummy_1 = self.EqualityModel(_identifier=4)
+        dummy_2 = self.EqualityModel(_identifier=4)
+        self.assertTrue(dummy_1.__eq__(dummy_2))
+        self.assertTrue(dummy_2.__eq__(dummy_1))
+
+    def test_differing_classes(self):
+        dummy_1 = self.EqualityModel(_identifier=7)
+        dummy_2 = self.OtherEqualityModel(_identifier=7)
+        self.assertFalse(dummy_1.__eq__(dummy_2))
+        self.assertFalse(dummy_2.__eq__(dummy_1))
+
+    def test_differing_identifiers(self):
+        dummy_1 = self.EqualityModel(_identifier=4)
+        dummy_2 = self.EqualityModel(_identifier=7)
+        self.assertFalse(dummy_1.__eq__(dummy_2))
+        self.assertFalse(dummy_2.__eq__(dummy_1))
+
+    def test_neq_returns_opposite_of_eq(self):
+        dummy_1 = self.EqualityModel(_identifier=4)
+        dummy_2 = self.EqualityModel(_identifier=4)
+        with patch.object(dummy_1, '__eq__', return_value=True):
+            self.assertFalse(dummy_1.__neq__(dummy_2))
+        with patch.object(dummy_1, '__eq__', return_value=False):
+            self.assertTrue(dummy_1.__neq__(dummy_2))
+
+
 class SerializedReferenceTestCase(TestCase):
     def test_init_sets_keys(self):
         ref = SerializedReference('foo.bar.baz', '42')

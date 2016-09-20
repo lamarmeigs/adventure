@@ -53,12 +53,18 @@ class GameSaver:
         items = copy(self.game.player.inventory)
         people = []
         exits = []
+        genders = []
+        directions = []
         for location in self.game.locations:
             items += location.items
             exits += location.exits
+            for exit in location.exits:
+                if exit.direction not in directions:
+                    directions.append(exit.direction)
             people += location.people
-        genders = list(set([person.gender for person in people]))
-        directions = list(set([exit.direction for exit in exits]))
+            for person in location.people:
+                if person.gender not in genders:
+                    genders.append(person.gender)
         return {
             'player': self.game.player,
             'people': people,
