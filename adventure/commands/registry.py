@@ -22,3 +22,19 @@ class CommandRegistry(dict):
 
 # Instantiate the CommandRegistry "singleton" to use throughout the package
 registry = CommandRegistry()
+
+
+def command(verb):
+    """Decorator that registers a function to handle a given command verb
+
+    Args:
+        verb (str): a single-word command (a verb, eg. wait, drop, attack)
+    """
+    def _wrapped_function(command_function):
+        registry.add_command(verb, command_function)
+
+        def _run_command(*args, **kwargs):
+            return command_function(*args, **kwargs)
+
+        return _run_command
+    return _wrapped_function

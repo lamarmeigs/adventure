@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from adventure.commands.registry import CommandRegistry, registry
+from adventure.commands.registry import command, CommandRegistry, registry
 
 
 class CommandRegistryTestCase(TestCase):
@@ -27,3 +27,12 @@ class CommandRegistryTestCase(TestCase):
 class RegistryInstanceTestCase(TestCase):
     def test_registry_type(self):
         self.assertIsInstance(registry, CommandRegistry)
+
+
+class CommandDecoratorTestCase(TestCase):
+    def test_decorated_function_added_to_registry(self):
+        command_verb = lambda x: x
+        talk = command('talk')(command_verb)
+        self.assertIn('talk', registry.commands)
+        self.assertEqual(registry['talk'], command_verb)
+        self.assertEqual(command_verb('foo'), talk('foo'))
