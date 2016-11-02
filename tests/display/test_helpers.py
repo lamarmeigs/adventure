@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from adventure.display.helpers import concatenate_items
+from adventure.display.helpers import concatenate_items, guess_article
 
 
 class ConcatenateItemsTestCase(TestCase):
@@ -26,3 +26,19 @@ class ConcatenateItemsTestCase(TestCase):
 
         text = concatenate_items(['item1', 'item2', 'item3'], conjunction='or')
         self.assertEqual(text, 'item1, item2, or item3')
+
+
+class GuessArticleTestCase(TestCase):
+    def test_starts_with_vowel(self):
+        self.assertEqual(guess_article('apple'), 'an')
+        self.assertEqual(guess_article('Electron'), 'an')
+        self.assertEqual(guess_article('ineluctable consequence'), 'an')
+        self.assertEqual(guess_article('Ouroboros'), 'an')
+        self.assertEqual(guess_article('Underdark passage'), 'an')
+
+    def test_starts_with_consonant(self):
+        self.assertEqual(guess_article('rotten apple'), 'a')
+        self.assertEqual(guess_article('Proton'), 'a')
+        self.assertEqual(guess_article('consequence'), 'a')
+        self.assertEqual(guess_article('Snake'), 'a')
+        self.assertEqual(guess_article('passage'), 'a')
