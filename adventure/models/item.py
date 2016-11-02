@@ -1,3 +1,6 @@
+from copy import copy
+
+from adventure.display.helpers import guess_article
 from adventure.models.base import BaseModel
 
 
@@ -9,12 +12,13 @@ class Item(BaseModel):
     it, separate from other defined models.
     """
 
-    def __init__(self, name, synonym_names=None, description=None,
-                 is_gettable=False, _identifier=None):
+    def __init__(self, name, article=None, synonym_names=None,
+                 description=None, is_gettable=False, _identifier=None):
         """Creates a new `Item` instance.
 
         Arguments:
             name (str): the primary way to refer to this object.
+            article (str): the article used to refer to this item.
             synonym_names (list of str): Any additional strings that can be
                 substituted for `name`.
             description (str): a detailed description of the object.
@@ -22,10 +26,19 @@ class Item(BaseModel):
             _identifier (int): an optional unique identifier
         """
         self.name = name
+        self.article = article
         self.synonym_names = synonym_names or []
         self.description = description or ''
         self.is_gettable = is_gettable
         super().__init__(_identifier=_identifier)
+
+    @property
+    def article(self):
+        return self._article if self._article else guess_article(self.name)
+
+    @article.setter
+    def article(self, article):
+        self._article = article
 
     def use(self, with_items=None):
         """Activate the item's inherent utility, or use it with other items.
@@ -42,7 +55,9 @@ class Item(BaseModel):
         Return:
             a dictionary representation of self
         """
-        return self.__dict__
+        serialized_item = copy(self.__dict__)
+        serialized_item['article'] = serialized_item.pop('_article')
+        return serialized_item
 
     def __str__(self):
         return '<Item {}: {}>'.format(self._identifier, self.name)
