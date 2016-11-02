@@ -40,6 +40,10 @@ class Item(BaseModel):
     def article(self, article):
         self._article = article
 
+    @property
+    def full_name(self):
+        return '{} {}'.format(self.article, self.name)
+
     def use(self, with_items=None):
         """Activate the item's inherent utility, or use it with other items.
 

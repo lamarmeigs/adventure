@@ -18,6 +18,10 @@ class ItemTestCase(TestCase):
         item.article = 'foobar'
         self.assertEqual(item._article, 'foobar')
 
+    def test_full_name(self):
+        item = Item('thing', 'the one and only')
+        self.assertEqual(item.full_name, 'the one and only thing')
+
     def test_use(self):
         pass
 
