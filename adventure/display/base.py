@@ -1,7 +1,7 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
 
-class BaseOutputter(metaclass=ABCMeta):
+class BaseOutputter(ABC):
     """An abstract base class to establish outputter methods"""
 
     @abstractmethod

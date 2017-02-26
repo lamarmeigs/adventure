@@ -1,7 +1,7 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
 
-class BaseModel(metaclass=ABCMeta):
+class BaseModel(ABC):
     """A base model providing common functionality expected of all models."""
 
     # Class attribute to track the number of instantiated objects of this
