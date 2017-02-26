@@ -17,6 +17,39 @@ class Player(BaseModel):
         self.score = score or 0
         super().__init__(_identifier=_identifier)
 
+    def find_visible_object(self, obj_name):
+        """Given the name of an object, return the object if it is visible.
+
+        Arguments:
+            obj_name (str): name of an object visible to the player
+
+        Returns:
+            the object matching obj_name or None
+        """
+        visible_people = self.location.people
+        visible_items = self.inventory + self.location.items
+
+        named_people = {}
+        for person in visible_people:
+            named_people[person.name] = person
+            named_people.update(
+                {name: person for name in person.synonym_names}
+            )
+
+        named_items = {}
+        for item in visible_items:
+            named_items[item.name] = item
+            named_items.update({name: item for name in item.synonym_names})
+
+        obj = None
+        if obj_name == self.location.name:
+            obj = self.location
+        elif obj_name in named_people.keys():
+            obj = named_people[obj_name]
+        elif obj_name in named_items.keys():
+            obj = named_items[obj_name]
+        return obj
+
     def serialize(self):
         """Transform this player object into a JSON-serializable dictionary.
 
